@@ -1,0 +1,235 @@
+{
+	"info": {
+		"_postman_id": "7ed52a3a-60e4-4b74-9ac5-00f97d1c2c7a",
+		"name": "Petstore Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12718179"
+	},
+	"item": [
+		{
+			"name": "Create new pet",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Generate random pet data",
+							"const petId = pm.variables.replaceIn('{{$randomInt}}');",
+							"const petName = pm.variables.replaceIn('{{$randomFirstName}}');",
+							"",
+							"// Store generated data for future requests",
+							"pm.collectionVariables.set('petId', petId);",
+							"pm.collectionVariables.set('petName', petName);",
+							"pm.collectionVariables.set('initialStatus', 'available');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Pet created with correct data\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData.id).to.eql(Number(pm.collectionVariables.get('petId')));",
+							"    pm.expect(responseData.name).to.eql(pm.collectionVariables.get('petName'));",
+							"    pm.expect(responseData.status).to.eql(pm.collectionVariables.get('initialStatus'));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{petId}},\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dogs\"\n    },\n    \"name\": \"{{petName}}\",\n    \"photoUrls\": [\n        \"string\"\n    ],\n    \"tags\": [\n        {\n            \"id\": 0,\n            \"name\": \"tag1\"\n        }\n    ],\n    \"status\": \"{{initialStatus}}\"\n}"
+				},
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get pet by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Pet data matches created pet\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData.id).to.eql(Number(pm.collectionVariables.get('petId')));",
+							"    pm.expect(responseData.name).to.eql(pm.collectionVariables.get('petName'));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet",
+						"{{petId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update pet status",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Set new status for update",
+							"pm.collectionVariables.set('updatedStatus', 'sold');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Pet status updated correctly\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData.status).to.eql(pm.collectionVariables.get('updatedStatus'));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": {{petId}},\n    \"category\": {\n        \"id\": 1,\n        \"name\": \"Dogs\"\n    },\n    \"name\": \"{{petName}}\",\n    \"photoUrls\": [\n        \"string\"\n    ],\n    \"tags\": [\n        {\n            \"id\": 0,\n            \"name\": \"tag1\"\n        }\n    ],\n    \"status\": \"{{updatedStatus}}\"\n}"
+				},
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify updated pet status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Pet status was updated\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData.id).to.eql(Number(pm.collectionVariables.get('petId')));",
+							"    pm.expect(responseData.name).to.eql(pm.collectionVariables.get('petName'));",
+							"    pm.expect(responseData.status).to.eql(pm.collectionVariables.get('updatedStatus'));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://petstore.swagger.io/v2/pet/{{petId}}",
+					"protocol": "https",
+					"host": [
+						"petstore",
+						"swagger",
+						"io"
+					],
+					"path": [
+						"v2",
+						"pet",
+						"{{petId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "petId",
+			"value": ""
+		},
+		{
+			"key": "petName",
+			"value": ""
+		},
+		{
+			"key": "initialStatus",
+			"value": ""
+		},
+		{
+			"key": "updatedStatus",
+			"value": ""
+		}
+	]
+}
