@@ -1,5 +1,3 @@
-PetstoreCollection.json
-
 # Test Cases for POST /pet Endpoint
 
 ## Positive Test Cases
@@ -113,6 +111,7 @@ PetstoreCollection.json
 
 - API is available
 - Pet with specific ID already exists
+
 **Steps:**
 
 1. Send POST request with existing ID
@@ -125,6 +124,7 @@ PetstoreCollection.json
 ### TC009 - Check request size limits
 
 **Precondition:** API is available  
+
 **Steps:**
 
 1. Send POST request with:
@@ -143,6 +143,7 @@ PetstoreCollection.json
 
 - API is available
 - Category with specific ID does not exist
+
 **Steps:**
 
 1. Send POST request with a category ID that does not exist
